@@ -1,0 +1,9 @@
+name: tensorflow-example
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      batch_size: {type: int, default: 32}
+      train_steps: {type: int, default: 60}
+    command: "python fmnist_demo_training.py --batch_size={batch_size} --train_steps={train_steps}"
