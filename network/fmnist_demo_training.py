@@ -16,7 +16,21 @@ import numpy as np
 
 def main(argv):
 
-    for epoch in [10, 15]:
+    model1 = keras.Sequential([
+                keras.layers.Flatten(input_shape=(28, 28)),
+                keras.layers.Dense(128, activation='relu'),
+                keras.layers.Dense(10)
+            ])
+
+    model2 = keras.Sequential([
+                keras.layers.Flatten(input_shape=(28, 28)),
+                keras.layers.Dense(128, activation='relu'),
+                keras.layers.Dense(256, activation='relu'),
+                keras.layers.Dense(10)
+            ])
+
+
+    for epoch, model in zip([10, 15], [model1, model2]):
 
         with mlflow.start_run():
 
@@ -34,7 +48,7 @@ def main(argv):
 
             test_images = test_images / 255.0
 
-            model = keras.Sequential([
+            model1 = keras.Sequential([
                 keras.layers.Flatten(input_shape=(28, 28)),
                 keras.layers.Dense(128, activation='relu'),
                 keras.layers.Dense(10)
