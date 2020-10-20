@@ -1,4 +1,5 @@
 venv/
+downloads
 
 *.pyc
 __pycache__/
