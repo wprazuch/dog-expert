@@ -1,4 +1,4 @@
 python bing_images_download.py -u "https://www.bing.com/images/search?q=affenpinscher&qs=n&form=QBIR&scope=images&sp=-1&pq=affenpinscher&sc=1-13&cvid=91FF148FD0EB45D3A467DF3034CD5A3B&first=1&scenario=ImageBasicHover" -l 1000 -i affenpinscher -cd "chromedriver_win32\chromedriver.exe"
 
 
-python bing_images_download.py -u "https://www.bing.com/images/search?q=cocker%20spaniel&qs=n&form=QBIR&sp=-1&pq=cocker%20spaniel&sc=8-14&cvid=05557D23A7CC489E96C6322BE20AAEF0&first=1&scenario=ImageBasicHover" -l 500 -i cocker_spaniel -cd "chromedriver_win32\chromedriver.exe"
+python bing_images_download.py -u "https://www.bing.com/images/search?q=english%20mastiff&qs=n&form=QBIR&sp=-1&pq=english%20mastiff&sc=8-15&cvid=31B0DF0A588C40A5A3255880BAE11A84&first=1&scenario=ImageBasicHover" -l 500 -i english_mastiff -cd "chromedriver_win32\chromedriver.exe"
