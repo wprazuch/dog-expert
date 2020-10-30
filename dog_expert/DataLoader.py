@@ -8,6 +8,8 @@ from tensorflow.keras.preprocessing.image import load_img
 
 opj = os.path.join
 
+tf.config.experimental_run_functions_eagerly(True)
+
 
 class DataLoader:
 
@@ -19,6 +21,8 @@ class DataLoader:
         self.dataset_dir = dataset_dir
         self.batch_size = batch_size
         self.class_mapping = class_mapping
+
+        self.no_classes = len(class_mapping.keys())
 
         self.train_dataset = None
         self.val_dataset = None
@@ -54,7 +58,7 @@ class DataLoader:
         return dataset.padded_batch(
             self.batch_size,
             padded_shapes=({'data_point': [None, None, 3]},
-                           {'target': [None, self.no_classes]})).prefetch(
+                           {'target': [self.no_classes, ]})).prefetch(
             buffer_size=self.buffer_size)
 
     def __reinstantiate(self):
@@ -75,24 +79,24 @@ class DataLoader:
 
     def __create_dataset_pipeline(self, path, shuffle=True) -> tf.data.Dataset:
 
-        def load_image(path):
-            img = load_img(path)
-            img = np.array(img)
-            return img
-
         def get_one_hot(idx):
-            one_hot = np.zeros((len(self.class_mapping.keys())))
-            one_hot[idx] = 1
+            print("Type od idx: ")
+            one_hot = tf.one_hot(idx, depth=self.no_classes, dtype=tf.float32)
             return one_hot
 
         def load_image_label_pairs(case):
-            return {'data_point': load_image(case[0]),
-                    'target': float(get_one_hot(int(case[1])), out_type=tf.float32)}
+            return {'data_point': tf.io.decode_image(tf.io.read_file(case[0]), channels=3),
+                    'target': get_one_hot(int(case[1]))}
+
+        def convert_to_in_out_dicts(case):
+            output_dict = {'target': case.pop('target')}
+            return case, output_dict
 
         dataset = self.__get_dataset_filepaths(path)
         dataset = tf.data.Dataset.from_tensor_slices(dataset)
         dataset = dataset.map(load_image_label_pairs)
-        dataset = self.processor.add_to_graph(dataset)
+        dataset = self.preprocessor.add_to_graph(dataset)
+        dataset = dataset.map(convert_to_in_out_dicts).cache()
 
         if shuffle:
             dataset = dataset.shuffle(2000, reshuffle_each_iteration=True)
