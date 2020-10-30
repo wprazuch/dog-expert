@@ -57,8 +57,8 @@ class DataLoader:
     def __batch_and_prefetch(self, dataset: tf.data.Dataset) -> tf.data.Dataset:
         return dataset.padded_batch(
             self.batch_size,
-            padded_shapes=({'data_point': [None, None, 3]},
-                           {'target': [self.no_classes, ]})).prefetch(
+            padded_shapes=([None, None, 3],
+                           [self.no_classes, ])).prefetch(
             buffer_size=self.buffer_size)
 
     def __reinstantiate(self):
@@ -88,15 +88,14 @@ class DataLoader:
             return {'data_point': tf.io.decode_image(tf.io.read_file(case[0]), channels=3),
                     'target': get_one_hot(int(case[1]))}
 
-        def convert_to_in_out_dicts(case):
-            output_dict = {'target': case.pop('target')}
-            return case, output_dict
+        def unpack_from_dict(case):
+            return case['data_point'], case['target']
 
         dataset = self.__get_dataset_filepaths(path)
         dataset = tf.data.Dataset.from_tensor_slices(dataset)
         dataset = dataset.map(load_image_label_pairs)
         dataset = self.preprocessor.add_to_graph(dataset)
-        dataset = dataset.map(convert_to_in_out_dicts).cache()
+        dataset = dataset.map(unpack_from_dict).cache()
 
         if shuffle:
             dataset = dataset.shuffle(2000, reshuffle_each_iteration=True)
