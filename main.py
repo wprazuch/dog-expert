@@ -46,7 +46,7 @@ def main():
 
     model = Model(inputs=base_model.input, outputs=predictions)
 
-    model.compile(loss='categorical_crossentropy', optimizer=Adam(
+    model.compile(loss='mse', optimizer=Adam(
         learning_rate=0.03), metrics=['accuracy'])
 
     history = model.fit(train, validation_data=val,
