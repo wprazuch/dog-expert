@@ -1,3 +1,16 @@
 {
-    "python.pythonPath": "C:\\ProgramData\\Anaconda3\\envs\\deeplearning\\python.exe"
+    "python.pythonPath": "C:\\Users\\wprazuch\\Anaconda3\\envs\\deeplearning\\python.exe",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.formatting.provider": "autopep8",
+    "editor.formatOnSave": true,
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "100",
+        "--experimental"
+    ],
+    "autoDocstring.docstringFormat": "numpy",
+    "python.testing.pytestEnabled": true,
+    "git.ignoreLimitWarning": true
 }

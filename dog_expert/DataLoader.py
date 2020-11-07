@@ -15,10 +15,11 @@ class DataLoader:
 
     buffer_size = tf.data.experimental.AUTOTUNE
 
-    def __init__(self, dataset_dir: str, batch_size: int, class_mapping: dict,
-                 preprocessor: Preprocessor = None):
+    def __init__(self, train_dataset_dir: str, val_dataset_dir: str, batch_size: int,
+                 class_mapping: dict, preprocessor: Preprocessor = None):
 
-        self.dataset_dir = dataset_dir
+        self.train_dataset_dir = train_dataset_dir
+        self.val_dataset_dir = val_dataset_dir
         self.batch_size = batch_size
         self.class_mapping = class_mapping
 
@@ -62,8 +63,8 @@ class DataLoader:
             buffer_size=self.buffer_size)
 
     def __reinstantiate(self):
-        self.train_dataset = self.__create_dataset_pipeline(opj(self.dataset_dir))
-        self.val_dataset = self.__create_dataset_pipeline(opj(self.dataset_dir), shuffle=False)
+        self.train_dataset = self.__create_dataset_pipeline(opj(self.train_dataset_dir))
+        self.val_dataset = self.__create_dataset_pipeline(opj(self.val_dataset_dir), shuffle=False)
 
     def __get_dataset_filepaths(self, path: str) -> list:
         labelled_pairs = []
@@ -80,7 +81,6 @@ class DataLoader:
     def __create_dataset_pipeline(self, path, shuffle=True) -> tf.data.Dataset:
 
         def get_one_hot(idx):
-            print("Type od idx: ")
             one_hot = tf.one_hot(idx, depth=self.no_classes, dtype=tf.float32)
             return one_hot
 
@@ -95,7 +95,7 @@ class DataLoader:
         dataset = tf.data.Dataset.from_tensor_slices(dataset)
         dataset = dataset.map(load_image_label_pairs)
         dataset = self.preprocessor.add_to_graph(dataset)
-        dataset = dataset.map(unpack_from_dict).cache()
+        dataset = dataset.map(unpack_from_dict)
 
         if shuffle:
             dataset = dataset.shuffle(2000, reshuffle_each_iteration=True)
